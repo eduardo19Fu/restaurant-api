@@ -39,7 +39,7 @@ public class Reserva implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idReserva;
+    private Long idReserva;
 
     private LocalDate fechaReserva;
 

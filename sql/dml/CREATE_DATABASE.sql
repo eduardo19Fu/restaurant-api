@@ -55,7 +55,7 @@ CREATE TABLE mesas (
 -- Creación de la tabla para las reservas
 DROP TABLE IF EXISTS reservas;
 CREATE TABLE reservas (
-    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+    id_reserva BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_cliente BIGINT NOT NULL,
     id_mesa VARCHAR(100) NOT NULL,
     fecha_reserva DATE NOT NULL,
