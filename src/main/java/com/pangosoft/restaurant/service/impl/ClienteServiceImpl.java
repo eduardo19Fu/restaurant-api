@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,18 +50,12 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     public Cliente getCliente(long id) {
         log.info("Obteniendo cliente registrado con ID: {}", id);
-        Optional<Cliente> cliente = null;
 
         try {
-            cliente = clienteRepository.findById(id);
-
-            if (cliente.isPresent()) {
-                log.info("Devolviendo cliente con ID: {}", id);
-                return cliente.get();
-            } else {
-                log.warn("No existen cliente con ID: {}", id);
-                throw new NotFoundException("No existe cliente con ID: ".concat(String.valueOf(id)).concat(" registrado"));
-            }
+            return clienteRepository.findById(id).orElseThrow(() -> {
+                log.warn("No existe un cliente con ID: {}", id);
+                return new NotFoundException("No existe un cliente con ID: " + id);
+            });
         } catch (DataAccessException e) {
             log.error("Ha ocurrido una excepcion a nivel de Base de Datos al intentar consultar cliente con ID: {}, {}", id, e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException("Ha ocurrido una excepcion a nivel de Base de Datos al intentar consultar cliente con ID: "
@@ -81,13 +74,8 @@ public class ClienteServiceImpl implements IClienteService {
 
         try {
             newCliente = clienteRepository.save(cliente);
-            if(newCliente != null) {
-                log.info("Retornando nuevo cliente registrado con ID: {}", newCliente.getIdCliente());
-                return newCliente;
-            } else {
-                log.error("No se ha podido crear el cliente");
-                return null;
-            }
+            log.info("Retornando nuevo cliente registrado con ID: {}", newCliente.getIdCliente());
+            return newCliente;
         } catch (DataAccessException e) {
             log.error("Ha ocurrido un error a nivel de Base de Datos al tratar de registrar el nuevo cliente: {}", e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException(("Ha ocurrido un error a nivel de Base de Datos " +
