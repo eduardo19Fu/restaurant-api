@@ -153,3 +153,16 @@ CREATE TABLE inventario (
     PRIMARY KEY (id_ingrediente, fecha, tipo_operacion, id_origen, tipo_origen),
     CONSTRAINT fk_inventario_id_ingrediente FOREIGN KEY (id_ingrediente) REFERENCES ingredientes(id_ingrediente)
 );
+
+-- Creación de la tabla para la relacion entre los platos y los ingredientes
+DROP TABLE IF EXISTS plato_ingredientes;
+CREATE TABLE plato_ingredientes(
+    id_plato INT,
+    id_ingrediente INT,
+    cantidad DECIMAL(10,2),
+    id_unidad_medida VARCHAR(10) NOT NULL,
+    PRIMARY KEY (id_plato, id_ingrediente),
+    CONSTRAINT fk_plato_ingredientes_id_plato FOREIGN KEY (id_plato) REFERENCES platos(id_plato),
+    CONSTRAINT fk_plato_ingredientes_id_ingrediente FOREIGN KEY (id_ingrediente) REFERENCES ingredientes(id_ingrediente),
+    CONSTRAINT fk_plato_ingredientes_id_unidad_medida FOREIGN KEY (id_unidad_medida) REFERENCES unidades_medida(id_unidad_medida)
+);

@@ -61,6 +61,7 @@ public class MesaController {
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> eliminarMesa(@PathVariable Integer id) {
         log.info("Eliminando mesa: {}", id);
+        mesaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

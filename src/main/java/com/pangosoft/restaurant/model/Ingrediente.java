@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +24,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @Entity
 @Table(name = "ingredientes")
@@ -46,4 +47,9 @@ public class Ingrediente implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_unidad_medida")
     private UnidadMedida unidadMedida;
+
+    @PrePersist
+    public void prepersist() {
+        this.nombre = this.nombre.toUpperCase();
+    }
 }
