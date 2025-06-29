@@ -33,19 +33,19 @@ public class IngredienteController {
         return ResponseEntity.ok(ingredienteService.getIngredientes());
     }
 
-    @GetMapping(value = "/buscar/get/{id}")
+    @GetMapping(value = "/find/get/{id}")
     public ResponseEntity<Ingrediente> buscarIngredientePorId(@PathVariable Integer id) {
         log.info("Buscando Ingrediente por ID: {}", id);
         return ResponseEntity.ok(ingredienteService.getIngrediente(id));
     }
 
-    @PostMapping(value = "/registrar/post")
+    @PostMapping(value = "/create/post")
     public ResponseEntity<Ingrediente> crearIngrediente(@RequestBody Ingrediente ingrediente) {
         log.info("Creando Ingrediente: {}", ingrediente);
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredienteService.create(ingrediente));
     }
 
-    @PutMapping(value = "/editar/put/{id}")
+    @PutMapping(value = "/edit/put/{id}")
     public ResponseEntity<Ingrediente> editarIngrediente(@RequestBody Ingrediente ingrediente, @PathVariable Integer id) {
         log.info("Editando Ingrediente: {}", ingrediente);
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredienteService.update(ingrediente));

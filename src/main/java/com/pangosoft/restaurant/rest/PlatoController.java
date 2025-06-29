@@ -40,19 +40,19 @@ public class PlatoController {
         return ResponseEntity.ok(platoService.getPlatosPorEstado(EstadoPlatoEnum.valueOf(estado)));
     }
 
-    @GetMapping(value = "/buscar/get/{id}")
+    @GetMapping(value = "/find/get/{id}")
     public ResponseEntity<Plato> buscarPlatoPorId(@PathVariable Integer id) {
         log.info("Buscando plato por ID: {}", id);
         return ResponseEntity.ok(platoService.getPlato(id));
     }
 
-    @PostMapping(value = "/registrar/post")
+    @PostMapping(value = "/create/post")
     public ResponseEntity<Plato> crearPlato(@RequestBody Plato plato) {
         log.info("Registrando nuevo plato...");
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.create(plato));
     }
 
-    @PutMapping(value = "/editar/put/{id}")
+    @PutMapping(value = "/edit/put/{id}")
     public ResponseEntity<Plato> editarPlato(@RequestBody Plato plato, @PathVariable Integer id) {
         log.info("Editando plato por ID: {}", id);
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.update(plato));

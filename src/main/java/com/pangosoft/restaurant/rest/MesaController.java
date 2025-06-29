@@ -28,19 +28,19 @@ public class MesaController {
 
     private final IMesaService mesaService;
 
-    @GetMapping(value = "/listar/get")
+    @GetMapping(value = "/list/get")
     public ResponseEntity<List<Mesa>> listarMesas() {
         log.info("Listando todas las mesas registradas...");
         return ResponseEntity.ok(mesaService.getMesas());
     }
 
-    @GetMapping(value = "/listar/estado/get/{estado}")
+    @GetMapping(value = "/list/estado/get/{estado}")
     public ResponseEntity<List<Mesa>> listarMesasPorEstado(@PathVariable String estado) {
         log.info("Listado mesas por estado: {}", estado);
         return ResponseEntity.ok(mesaService.getMesasPorEstado(EstadoMesaEnum.valueOf(estado)));
     }
 
-    @GetMapping(value = "/buscar/get/{id}")
+    @GetMapping(value = "/find/get/{id}")
     public ResponseEntity<Mesa> buscarMesaPorId(@PathVariable Integer id) {
         log.info("Buscand mesa por ID: {}", id);
         return ResponseEntity.ok(mesaService.getMesa(id));

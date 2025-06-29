@@ -166,3 +166,76 @@ CREATE TABLE plato_ingredientes(
     CONSTRAINT fk_plato_ingredientes_id_ingrediente FOREIGN KEY (id_ingrediente) REFERENCES ingredientes(id_ingrediente),
     CONSTRAINT fk_plato_ingredientes_id_unidad_medida FOREIGN KEY (id_unidad_medida) REFERENCES unidades_medida(id_unidad_medida)
 );
+
+-- Creación de la tabla para las categorías (génerica para platos y bebidas)
+DROP TABLE IF EXISTS categorias;
+CREATE TABLE categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255)
+);
+
+-- Creación de tabla para bebidas
+DROP TABLE IF EXISTS bebidas;
+CREATE TABLE bebidas (
+     id_bebida INT AUTO_INCREMENT PRIMARY KEY,
+     nombre VARCHAR(100) NOT NULL,
+     descripcion TEXT,
+     precio DECIMAL(10,2) NOT NULL,
+     imagen VARCHAR(100),
+     estado ENUM('DISPONIBLE','NO_DISPONIBLE','DESCONTINUADO','ELIMINADO') NOT NULL DEFAULT 'DISPONIBLE'
+);
+
+-- Creacion de tabla para relacion de platos-categorias
+DROP TABLE IF EXISTS platos_categorias;
+CREATE TABLE platos_categorias (
+    id_plato     INT NOT NULL,
+    id_categoria INT NOT NULL,
+    PRIMARY KEY (id_plato, id_categoria),
+    CONSTRAINT fk_platos_categorias_id_plato FOREIGN KEY (id_plato) REFERENCES platos(id_plato) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_platos_categorias_id_categoria FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+-- Creación de tablas para relacion de bebidas-categorias
+DROP TABLE IF EXISTS bebidas_categorias;
+CREATE TABLE bebidas_categorias (
+    id_bebida    INT NOT NULL,
+    id_categoria INT NOT NULL,
+    PRIMARY KEY (id_bebida, id_categoria),
+    CONSTRAINT fk_bebidas_categorias_id_bebida FOREIGN KEY (id_bebida) REFERENCES bebidas(id_bebida) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_bebidas_categorias_id_categoria FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+-- Tabla de ventanas de disponibilidad (turnos: desayuno, almuerzo, cena, etc.)
+DROP TABLE IF EXISTS horarios;
+CREATE TABLE horarios (
+    id_horario   INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion  VARCHAR(50)   NOT NULL,  -- p.ej. 'DESAYUNO', 'ALMUERZO', 'CENA'
+    hora_inicio  TIME          NOT NULL,
+    hora_fin     TIME          NOT NULL
+);
+
+-- Relación platos ↔ horarios (qué platos están disponibles en qué turnos)
+DROP TABLE IF EXISTS platos_horarios;
+CREATE TABLE platos_horarios (
+    id_plato   INT NOT NULL,
+    id_horario INT NOT NULL,
+    PRIMARY KEY (id_plato, id_horario),
+    CONSTRAINT fk_platos_horarios_id_plato FOREIGN KEY (id_plato)   REFERENCES platos(id_plato) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_platos_horarios_id_horario FOREIGN KEY (id_horario) REFERENCES horarios(id_horario) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+-- Relación bebidas ↔ horarios (qué bebidas están disponibles en qué turnos)
+DROP TABLE IF EXISTS bebidas_horarios;
+CREATE TABLE bebidas_horarios (
+    id_bebida   INT NOT NULL,
+    id_horario  INT NOT NULL,
+    PRIMARY KEY (id_bebida, id_horario),
+    CONSTRAINT fk_bebidas_horarios_id_bebida FOREIGN KEY (id_bebida)  REFERENCES bebidas(id_bebida) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_bebidas_horarios_id_horario FOREIGN KEY (id_horario) REFERENCES horarios(id_horario) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+
+
+

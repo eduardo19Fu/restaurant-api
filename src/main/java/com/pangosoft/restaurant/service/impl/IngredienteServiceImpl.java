@@ -100,6 +100,7 @@ public class IngredienteServiceImpl implements IIngredienteService {
                         .build();
                 ingredienteRepository.save(ingredienteUpdated);
             } else {
+
                 log.warn("El ingrediente para actualizar no existe...");
                 throw new NotFoundException("El ingrediente para actualizar no existe");
             }

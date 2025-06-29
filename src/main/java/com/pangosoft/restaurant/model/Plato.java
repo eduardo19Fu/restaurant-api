@@ -67,6 +67,13 @@ public class Plato implements Serializable {
     )
     private Set<PlatoIngrediente> ingredientes = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "plato",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<PlatoCategoria> categorias = new HashSet<>();
+
     /**
      * Agregar un ingrediente y cantidad a este plato
      * */
@@ -84,5 +91,7 @@ public class Plato implements Serializable {
     public void removerIngrediente(Ingrediente ing) {
         ingredientes.removeIf(pi -> pi.getIngrediente().equals(ing));
     }
+
+
 
 }
