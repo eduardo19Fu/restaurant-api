@@ -45,15 +45,16 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.create(cliente));
     }
 
-    @PutMapping(value = "/update/put/{id}")
+    @PutMapping(value = "/edit/put/{id}")
     public ResponseEntity<Cliente> editarCliente(@RequestBody Cliente cliente, @PathVariable Long id) {
         log.info("Editando cliente {}", id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(cliente));
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(cliente, id));
     }
 
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> eliminarCliente(@PathVariable Long id) {
         log.info("Eliminando cliente {}", id);
+        clienteService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

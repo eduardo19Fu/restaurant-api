@@ -40,9 +40,6 @@ public class ClienteServiceImpl implements IClienteService {
         } catch (DataAccessException e) {
             log.error("Ha ocurrido una excepcion a nivel de Base de Datos al intentar consultar listado de clientes: {}", e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException("Ha ocurrido una excepcion a nivel de Base de Datos", e);
-        } catch (Exception e) {
-            log.error("Ha ocurrido un error inesperado al intentar consultar listado de clientes: {}", e.getMessage());
-            throw new RuntimeException("Ha ocurrido un error inesperado al intentar consultar listado de clientes: ".concat(e.getMessage()), e);
         }
     }
 
@@ -60,9 +57,6 @@ public class ClienteServiceImpl implements IClienteService {
             log.error("Ha ocurrido una excepcion a nivel de Base de Datos al intentar consultar cliente con ID: {}, {}", id, e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException("Ha ocurrido una excepcion a nivel de Base de Datos al intentar consultar cliente con ID: "
                     .concat(String.valueOf(id)), e);
-        } catch (Exception e) {
-            log.error("Ha ocurrido un error inesperado al intentar consultar cliente con ID: {}, {}", id, e.getMessage());
-            throw new RuntimeException("Ha ocurrido un error inesperado al intentar consultar cliente con ID: ".concat(String.valueOf(id)), e);
         }
     }
 
@@ -80,37 +74,29 @@ public class ClienteServiceImpl implements IClienteService {
             log.error("Ha ocurrido un error a nivel de Base de Datos al tratar de registrar el nuevo cliente: {}", e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException(("Ha ocurrido un error a nivel de Base de Datos " +
                     "al tratar de registrar el nuevo cliente: ").concat(e.getMessage()), e);
-        } catch (Exception e) {
-            log.error("Ha ocurrido un error inesperado al intentar crear un nuevo cliente: {}", e.getMessage());
-            throw new RuntimeException("Ha ocurrido un error inesperado al intentar crear un nuevo cliente", e);
         }
     }
 
     @Transactional
     @Override
-    public Cliente update(Cliente cliente) {
+    public Cliente update(Cliente cliente, Long id) {
         log.info("Buscando clienteExistente registrado con ID: {}", cliente.getIdCliente());
 
         Cliente clienteExistente = null;
         Cliente clienteActualizado = null;
 
         try {
-            clienteExistente = clienteRepository.findById(cliente.getIdCliente()).orElse(null);
+            clienteExistente = getCliente(id);
 
             if(clienteExistente != null) {
-                log.info("Actualizando clienteExistente con ID: {}", cliente.getIdCliente());
+                log.info("Actualizando clienteExistente con ID: {}", clienteExistente.getIdCliente());
                 clienteActualizado = clienteExistente.toBuilder()
-                        .idCliente(cliente.getIdCliente())
-                        .nombre(cliente.getNombre())
-                        .nit(cliente.getNit())
-                        .direccion(cliente.getDireccion())
-                        .fechaCreacion(cliente.getFechaCreacion())
+                        .nombre(cliente.getNombre().toUpperCase())
+                        .nit(cliente.getNit().toUpperCase())
+                        .direccion(cliente.getDireccion().toUpperCase())
                         .build();
 
                 clienteRepository.save(clienteActualizado);
-            } else {
-                log.warn("El cliente para actualizar no existe...");
-                throw new NotFoundException("El cliente para actualizar no existe.");
             }
 
             log.info("Cliente actualizado...");
@@ -118,9 +104,6 @@ public class ClienteServiceImpl implements IClienteService {
         } catch (DataAccessException e) {
             log.error("Ha ocurrido un error a nivel de Base de Datos al intentar actualizar el cliente: {}, {}", cliente.getIdCliente(), e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException("Ha ocurrido un error a nivel de Base de Datos al intentar actualizar el cliente", e);
-        } catch (Exception e) {
-            log.error("Ha ocurrido un error inesperado al intentar actualizar el cliente: {}", e.getMessage());
-            throw new RuntimeException("Ha ocurrido un error inesperado al intentar actualizar el cliente", e);
         }
     }
 
@@ -140,9 +123,6 @@ public class ClienteServiceImpl implements IClienteService {
         } catch (DataAccessException e) {
             log.error("Ha ocurrido un error a nivel de Base de Datos al intentar elimnar el cliente: {}, {}", id, e.getMessage());
             throw new com.pangosoft.restaurant.error.exceptions.DataAccessException("Ha ocurrido un error al intentar eliminar el cliente", e);
-        } catch (Exception e) {
-            log.error("Ha ocurrido un error inesperado al intentar eliminar el cliente: {}", e.getMessage());
-            throw new RuntimeException("Ha ocurrido un error inesperado al intentar eliminar el cliente", e);
         }
     }
 }

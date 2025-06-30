@@ -53,6 +53,9 @@ public class Cliente implements Serializable {
 
     @PrePersist
     public void configFechaRegistro() {
+        this.nombre = this.nombre.toUpperCase();
+        this.direccion = this.direccion.toUpperCase();
+        this.nit = this.nit.toUpperCase();
         if(fechaCreacion == null) { fechaCreacion = LocalDateTime.now(); }
     }
 }
