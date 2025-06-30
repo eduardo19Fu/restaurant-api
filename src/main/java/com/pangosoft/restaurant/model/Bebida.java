@@ -23,7 +23,6 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -63,8 +62,28 @@ public class Bebida implements Serializable {
     )
     private Set<BebidaCategoria> categorias;
 
+    @OneToMany(
+            mappedBy = "bebida",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<BebidaHorario> horarios;
+
     public void agregarCategoria(Categoria cat) {
         BebidaCategoria pivot = new BebidaCategoria(this, cat);
         this.categorias.add(pivot);
+    }
+
+    public void removerCategoria(Categoria categoria) {
+        categorias.removeIf(cat -> cat.getCategoria().equals(categoria));
+    }
+
+    public void agregarHorario(Horario horario) {
+        BebidaHorario pivot = new BebidaHorario(this, horario);
+        this.horarios.add(pivot);
+    }
+
+    public void removerHorario(Horario horario) {
+        horarios.removeIf(h -> h.getHorario().equals(horario));
     }
 }

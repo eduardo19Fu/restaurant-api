@@ -1,7 +1,6 @@
 package com.pangosoft.restaurant.model;
 
-import com.pangosoft.restaurant.model.llavesCompuestas.PlatoCategoriaId;
-
+import com.pangosoft.restaurant.model.llavesCompuestas.PlatoHorarioId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,7 +8,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,15 +21,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@ToString
 @Entity
-@Table(name = "platos_categorias")
-public class PlatoCategoria implements Serializable {
+@Table(name = "platos_horarios")
+public class PlatoHorario implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 8781444322888837355L;
+    private static final long serialVersionUID = -3141163002322997126L;
 
     @EmbeddedId
-    private PlatoCategoriaId id;
+    private PlatoHorarioId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("platoId")
@@ -40,13 +39,8 @@ public class PlatoCategoria implements Serializable {
     private Plato plato;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("categoriaId")
-    @JoinColumn(name = "id_categoria")
+    @MapsId("horarioId")
+    @JoinColumn(name = "id_horario")
     @ToString.Exclude
-    private Categoria categoria;
-
-    public PlatoCategoria(Plato plato, Categoria categoria) {
-        this.plato = plato;
-        this.categoria = categoria;
-    }
+    private Horario horario;
 }

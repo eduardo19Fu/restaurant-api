@@ -5,8 +5,10 @@ import com.pangosoft.restaurant.model.Ingrediente;
 import com.pangosoft.restaurant.model.Plato;
 import com.pangosoft.restaurant.model.UnidadMedida;
 import com.pangosoft.restaurant.model.enums.EstadoPlatoEnum;
-import com.pangosoft.restaurant.repository.IIngredienteRepository;
 import com.pangosoft.restaurant.repository.IPlatoRepository;
+import com.pangosoft.restaurant.service.ICategoriaService;
+import com.pangosoft.restaurant.service.IHorarioService;
+import com.pangosoft.restaurant.service.IIngredienteService;
 import com.pangosoft.restaurant.service.IPlatoService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,9 @@ import java.util.List;
 public class PlatoServiceImpl implements IPlatoService {
 
     private final IPlatoRepository platoRepository;
-    private final IIngredienteRepository ingredienteRepository;
+    private final IIngredienteService ingredienteService;
+    private final ICategoriaService categoriaService;
+    private final IHorarioService horarioService;
 
     @Transactional(readOnly = true)
     @Override
@@ -113,13 +117,29 @@ public class PlatoServiceImpl implements IPlatoService {
 
             for (var detalle : detallesEntrantes) {
                 Integer idIng = detalle.getIngrediente().getIdIngrediente();
-                Ingrediente ing = ingredienteRepository.findById(idIng)
-                        .orElseThrow(() -> new NotFoundException(
-                                "Ingrediente no encontrado con ID: " + idIng));
+                Ingrediente ing = ingredienteService.getIngrediente(idIng);
 
                 BigDecimal cantidad = detalle.getCantidad();
                 UnidadMedida unidadMedida = detalle.getUnidadMedida();
                 plato.agregarIngrediente(ing, cantidad, unidadMedida);
+            }
+
+            // 2) Categorías
+            var detallesCat = new HashSet<>(plato.getCategorias());
+            plato.getCategorias().clear();
+            for (var pc : detallesCat) {
+                Integer idCat = pc.getCategoria().getIdCategoria();
+                var cat = categoriaService.getCategoria(idCat);
+                plato.agregarCategoria(cat);
+            }
+
+            // 3) Horarios
+            var detallesHr = new HashSet<>(plato.getHorarios());
+            plato.getHorarios().clear();
+            for (var ph : detallesHr) {
+                Integer idHr = ph.getHorario().getIdHorario();
+                var hr = horarioService.getHorario(idHr);
+                plato.agregarHorario(hr);
             }
 
             Plato newPlato = platoRepository.save(plato);
@@ -154,11 +174,25 @@ public class PlatoServiceImpl implements IPlatoService {
             platoExistente.getIngredientes().clear();
             for (var detalle : plato.getIngredientes()) {
                 Integer idIng = detalle.getIngrediente().getIdIngrediente();
-                Ingrediente ing = ingredienteRepository.findById(idIng)
-                        .orElseThrow(() -> new NotFoundException(
-                                "Ingrediente no encontrado con ID: " + idIng));
+                Ingrediente ing = ingredienteService.getIngrediente(idIng);
 
                 platoExistente.agregarIngrediente(ing, detalle.getCantidad(), detalle.getUnidadMedida());
+            }
+
+            // 2) Categorías
+            platoExistente.getCategorias().clear();
+            for (var pc : plato.getCategorias()) {
+                Integer idCat = pc.getCategoria().getIdCategoria();
+                var cat = categoriaService.getCategoria(idCat);
+                platoExistente.agregarCategoria(cat);
+            }
+
+            // 3) Horarios
+            platoExistente.getHorarios().clear();
+            for (var ph : plato.getHorarios()) {
+                Integer idHr = ph.getHorario().getIdHorario();
+                var hr = horarioService.getHorario(idHr);
+                platoExistente.agregarHorario(hr);
             }
 
             Plato platoUpdated = platoRepository.save(platoExistente);

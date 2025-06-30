@@ -2,6 +2,7 @@ package com.pangosoft.restaurant.model;
 
 import com.pangosoft.restaurant.model.enums.EstadoPlatoEnum;
 
+import com.pangosoft.restaurant.model.llavesCompuestas.PlatoHorarioId;
 import com.pangosoft.restaurant.model.llavesCompuestas.PlatoIngredienteId;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -74,6 +75,13 @@ public class Plato implements Serializable {
     )
     private Set<PlatoCategoria> categorias = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "plato",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<PlatoHorario> horarios = new HashSet<>();
+
     /**
      * Agregar un ingrediente y cantidad a este plato
      * */
@@ -92,6 +100,39 @@ public class Plato implements Serializable {
         ingredientes.removeIf(pi -> pi.getIngrediente().equals(ing));
     }
 
+    /**
+     * Agregar una categoria nueva al plato
+     * */
 
+    public void agregarCategoria(Categoria categoria) {
+        PlatoCategoria pivot = new PlatoCategoria(this, categoria);
+        this.categorias.add(pivot);
+    }
+
+    /**
+     * Desasocia una categoria
+     * */
+    public void removerCategoria(Categoria categoria) {
+        categorias.removeIf(cat -> cat.getCategoria().equals(categoria));
+    }
+
+    /**
+     * Asocia un turno (horario) a este plato.
+     */
+    public void agregarHorario(Horario horario) {
+        PlatoHorario pivot = new PlatoHorario(
+                new PlatoHorarioId(this.getIdPlato(), horario.getIdHorario()),
+                this,
+                horario
+        );
+        this.horarios.add(pivot);
+    }
+
+    /**
+     * Desasocia un turno.
+     */
+    public void removerHorario(Horario horario) {
+        this.horarios.removeIf(ph -> ph.getHorario().equals(horario));
+    }
 
 }

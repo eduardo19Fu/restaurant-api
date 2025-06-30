@@ -3,11 +3,11 @@ package com.pangosoft.restaurant.service.impl;
 import com.pangosoft.restaurant.error.exceptions.NoContentException;
 import com.pangosoft.restaurant.error.exceptions.NotFoundException;
 import com.pangosoft.restaurant.model.Bebida;
-import com.pangosoft.restaurant.model.Categoria;
 import com.pangosoft.restaurant.model.enums.EstadoPlatoEnum;
 import com.pangosoft.restaurant.repository.IBebidaRepository;
-import com.pangosoft.restaurant.repository.ICategoriaRepository;
 import com.pangosoft.restaurant.service.IBebidaService;
+import com.pangosoft.restaurant.service.ICategoriaService;
+import com.pangosoft.restaurant.service.IHorarioService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,8 @@ public class BebidaServiceImpl implements IBebidaService {
 
     private final IBebidaRepository bebidaRepository;
 
-    private final ICategoriaRepository categoriaRepository;
+    private final ICategoriaService categoriaService;
+    private final IHorarioService horarioService;
 
     @Transactional(readOnly = true)
     @Override
@@ -106,12 +107,15 @@ public class BebidaServiceImpl implements IBebidaService {
             // Para cada categoría que viene en el DTO, cargamos la entidad y la agregamos
             for (var cb : categoriasEntrantes) {
                 Integer catId = cb.getCategoria().getIdCategoria();
-                Categoria cat = categoriaRepository.findById(catId)
-                        .orElseThrow(() -> {
-                            log.error("No existen categoria con ID: {}...", catId);
-                            return new NotFoundException("Categoría no encontrada: " + catId);
-                        });
-                bebida.agregarCategoria(cat);
+                var categoria = categoriaService.getCategoria(catId);
+                bebida.agregarCategoria(categoria);
+            }
+
+            // Para cada horario asignado durante la creación
+            for (var hr : bebida.getHorarios()) {
+                Integer idHr = hr.getHorario().getIdHorario();
+                var horario = horarioService.getHorario(idHr);
+                bebida.agregarHorario(horario);
             }
 
             Bebida newBebida = bebidaRepository.save(bebida);
@@ -141,14 +145,18 @@ public class BebidaServiceImpl implements IBebidaService {
                 .categorias(new HashSet<>())
                 .build();
 
+            // Asignar categorias durante la actualización de la bebida
             for (var cb : bebida.getCategorias()) {
-                Integer categoriaId = cb.getCategoria().getIdCategoria();
-                Categoria cat = categoriaRepository.findById(categoriaId)
-                        .orElseThrow(() -> {
-                            log.error("No existen categoria con ID: {}...", categoriaId);
-                            return new NotFoundException("Categoria no encontrada: " + categoriaId);
-                        });
-                bebidaActualizada.agregarCategoria(cat);
+                Integer idCat = cb.getCategoria().getIdCategoria();
+                var categoria = categoriaService.getCategoria(idCat);
+                bebidaActualizada.agregarCategoria(categoria);
+            }
+
+            // Asignar horarios durante la actualización de la bebida
+            for (var hr : bebida.getHorarios()) {
+                Integer idHr = hr.getHorario().getIdHorario();
+                var horario = horarioService.getHorario(idHr);
+                bebidaActualizada.agregarHorario(horario);
             }
 
             Bebida bebidaGuardada = bebidaRepository.save(bebidaActualizada);
