@@ -48,7 +48,7 @@ public class ClienteController {
     @PutMapping(value = "/edit/put/{id}")
     public ResponseEntity<Cliente> editarCliente(@RequestBody Cliente cliente, @PathVariable Long id) {
         log.info("Editando cliente {}", id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(cliente));
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(cliente, id));
     }
 
     @DeleteMapping(value = "/delete/{id}")
